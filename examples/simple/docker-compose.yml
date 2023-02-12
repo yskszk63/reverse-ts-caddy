@@ -1,0 +1,16 @@
+services:
+  proxy:
+    image: ghcr.io/yskszk63/reverse-ts-caddy:main
+    environment:
+      - TS_API_CLIENT_ID=${TS_API_CLIENT_ID}
+      - TS_API_CLIENT_SECRET=${TS_API_CLIENT_SECRET}
+      - AUTHKEY_TAG=${AUTHKEY_TAG}
+      - TS_HOSTNAME=${TS_HOSTNAME}
+      - PROXY_TO=nginx
+    volumes:
+      - ts:/var/lib/tailscale/
+  nginx:
+    image: nginx
+
+volumes:
+  ts:
