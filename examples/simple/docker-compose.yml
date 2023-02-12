@@ -1,6 +1,6 @@
 services:
   proxy:
-    image: ghcr.io/yskszk63/reverse-ts-caddy:main
+    image: ghcr.io/yskszk63/reverse-ts-caddy:latest
     environment:
       - TS_API_CLIENT_ID=${TS_API_CLIENT_ID}
       - TS_API_CLIENT_SECRET=${TS_API_CLIENT_SECRET}
