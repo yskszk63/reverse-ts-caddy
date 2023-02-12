@@ -18,6 +18,7 @@ if [[ -n "$TS_HOSTNAME" ]]; then
     unset TS_HOSTNAME
 fi
 containerboot &
+TS_PID=$!
 
 retry=0
 retry_max=100
@@ -27,7 +28,8 @@ until tailscale --socket $TS_SOCKET status > /dev/null || [[ retry -eq $retry_ma
     : $(( retry++ ))
     sleep 0.5
 done
-trap 'tailscale --socket $TS_SOCKET logout' EXIT
+
+trap 'kill -TERM $TS_PID $CADDY_PID' TERM INT
 
 dnsname=$(tailscale --socket $TS_SOCKET status --json |jq .Self.DNSName -r|sed -e's/\.$//')
 [[ -n "$dnsname" ]] || {
@@ -35,5 +37,7 @@ dnsname=$(tailscale --socket $TS_SOCKET status --json |jq .Self.DNSName -r|sed -
     exit 1
 }
 caddy reverse-proxy --from "$dnsname" --to "$PROXY_TO" --change-host-header &
+CADDY_PID=$!
 
+wait
 wait
